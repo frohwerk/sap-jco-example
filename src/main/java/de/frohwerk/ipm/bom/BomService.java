@@ -15,7 +15,7 @@ public interface BomService {
     @JcoFunction("BAPI_MAT_BOM_EXISTENCE_CHECK")
     @JcoExportResult(parameter = "RETURN")
     @JcoProperty("TYPE")
-    char hasBom(@JcoImportParameter("MATERIAL") final String matnr,
-                @JcoImportParameter("PLANT") final String werk,
-                @JcoImportParameter("BOMUSAGE") final String verwendung) throws AbapException;
+    char checkBom(@JcoImportParameter("MATERIAL") final String matnr,
+                  @JcoImportParameter("PLANT") final String werk,
+                  @JcoImportParameter("BOMUSAGE") final String verwendung) throws AbapException;
 }

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Defaults.defaultValue;
+import static com.google.common.base.Strings.nullToEmpty;
 import static de.frohwerk.ipm.reflect.Annotations.annotation;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
@@ -35,16 +37,10 @@ public class JcoServiceFactory {
             for (int i = 0; i < parameters.length; i++) {
                 handleParameter(function, parameters[i], args[i]);
             }
-            // END Iterate criterias...
-            try {
-                function.execute(destination);
-            } catch (AbapException ex) {
-                final String warning = function.getExportParameterList().getString("FL_WARNING");
-                throw ex;
-            }
-            // TODO Handle non-table parameters...
+            // Call the functions
+            function.execute(destination);
+            // Handle results
             return handleResult(function, method);
-            // END Iterate fields
         });
     }
 
@@ -54,14 +50,15 @@ public class JcoServiceFactory {
             final Class<?> resultType = tableResult.type();
             final JCoTable resultTable = function.getTableParameterList().getTable(tableResult.parameter());
             final List<Object> returnValue = new ArrayList<>();
-            while (resultTable.nextRow()) {
+            if (!resultTable.isEmpty()) do {
                 returnValue.add(createResultFromRecord(resultType, resultTable));
-            }
+            } while (resultTable.nextRow());
             return returnValue;
         } else if (method.isAnnotationPresent(JcoExportResult.class)) {
             final JcoExportResult exportResult = annotation(method, JcoExportResult.class);
             if (method.isAnnotationPresent(JcoProperty.class)) {
                 final JCoTable table = function.getTableParameterList().getTable(exportResult.parameter());
+                if (table.isEmpty()) return defaultValue(method.getReturnType());
                 return extractValue(table, annotation(method, JcoProperty.class).value(), method.getReturnType());
             } else {
                 final Class<?> resultType = method.getReturnType();
@@ -113,8 +110,10 @@ public class JcoServiceFactory {
     private Object extractValue(final JCoRecord record, final String name, final Class<?> type) {
         if (type.equals(boolean.class)) {
             return record.getInt(name) > 0;
+        } else if (type.equals(double.class)) {
+            return Double.parseDouble(nullToEmpty(record.getString(name)).replace(',', '.'));
         } else if (type.equals(float.class)) {
-            return record.getFloat(name);
+            return Float.parseFloat(nullToEmpty(record.getString(name)).replace(',', '.'));
         } else if (type.equals(int.class)) {
             return record.getInt(name);
         } else if (type.equals(char.class)) {
