@@ -11,3 +11,6 @@ target/
 
 # Acutal SAP destination (contains credentials)
 Standard.jcoDestination
+
+# Log outputs
+logs/
