@@ -65,6 +65,8 @@ public class JcoServiceFactory {
                 final JCoRecord record = exportResult.parameter().isEmpty() ? function.getExportParameterList() : function.getExportParameterList().getStructure(exportResult.parameter());
                 return createResultFromRecord(resultType, record);
             }
+        } else if (method.isAnnotationPresent(JcoProperty.class)) {
+            return extractValue(function.getExportParameterList(), annotation(method, JcoProperty.class).value(), method.getReturnType());
         } else {
             throw new IllegalArgumentException("Method " + method.getName() + "has no JcoResult annotation");
         }
