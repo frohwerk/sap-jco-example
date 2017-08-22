@@ -1,0 +1,9 @@
+#Standard destination
+jco.client.client=MANDANT
+jco.client.ashost=APPLICATION_SERVER_HOST
+jco.client.sysnr=INSTANZNUMMER
+jco.client.r3name=SYSTEMID
+jco.client.saprouter=SAP_ROUTER_STRING
+jco.client.lang=DE
+jco.client.user=USERNAME
+jco.client.passwd=PASSWORD

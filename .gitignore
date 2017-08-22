@@ -1,0 +1,13 @@
+# IntelliJ metadata
+jco-example.iml
+.idea/
+
+# Cannot be included due to copyright
+lib/sapjco3.jar
+lib/sapjco3.dll
+
+# Maven output folder
+target/
+
+# Acutal SAP destination (contains credentials)
+Standard.jcoDestination
