@@ -4,8 +4,6 @@ import com.sap.conn.jco.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Example {
@@ -59,80 +57,6 @@ public class Example {
                 data.getString("NET_WEIGHT"),
                 data.getString("UNIT_OF_WT")
         );
-        //
-        // BAPI_MATERIAL_GETALL
-        //
-//        materialDetail.getImportParameterList().setValue("STORAGELOCATION", "0001");
-    }
-
-    @JcoService("BAPI_MATERIAL")
-    interface MaterialService {
-        @JcoFunction("GETLIST")
-        @JcoResult("MATNRLIST")
-        List<MaterialRef> getList(@JcoSelector("MATNR") final String filter);
-    }
-
-    @interface JcoFunction {
-        String value();
-    }
-
-    @interface JcoService {
-        String value();
-    }
-
-    @interface JcoType {
-    }
-
-    @interface JcoSelector {
-        String value();
-    }
-
-    @interface JcoResult {
-        String value();
-    }
-
-    @interface JcoProperty {
-        String value();
-    }
-
-    class MaterialRef {
-        public String getMatnr() {
-            return matnr;
-        }
-
-        public void setMatnr(String matnr) {
-            this.matnr = matnr;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        @JcoProperty("MATERIAL")
-        private String matnr;
-        @JcoProperty("MATL_DESC")
-        private String description;
-    }
-
-    // @JcoService
-    // interface MaterialService {
-    //     @Query("s")
-    //     List<Material> getList()
-    // }
-
-    private static void printCompanyCodeList(JCoDestination destination, JCoRepository repository) throws JCoException {
-        final JCoFunction companyCodeGetList = checkNotNull(repository.getFunction("BAPI_COMPANYCODE_GETLIST"), "Function BAPI_COMPANYCODE_GETLIST not found");
-        companyCodeGetList.execute(destination);
-        final JCoStructure result = companyCodeGetList.getExportParameterList().getStructure("RETURN");
-        final JCoTable codes = companyCodeGetList.getTableParameterList().getTable("COMPANYCODE_LIST");
-        for (int i = 0; i < codes.getNumRows(); i++) {
-            codes.setRow(i);
-            logger.info("{}\t{}", codes.getString("COMP_CODE"), codes.getString("COMP_NAME"));
-        }
     }
 
     private static final Logger logger = LoggerFactory.getLogger(Example.class);
